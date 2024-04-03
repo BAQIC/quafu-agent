@@ -5,7 +5,7 @@ ENV RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.bfsu.edu.cn/g' /etc/apk/repositories \
-    && apk add --no-cache eigen-dev cmake git build-base curl
+    && apk add --no-cache eigen-dev cmake git build-base curl perl
 
 WORKDIR /home/sq
 RUN git clone --depth 1 --branch main https://github.com/softwareqinc/qpp
