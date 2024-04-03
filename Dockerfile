@@ -14,7 +14,9 @@ RUN cd qpp && cmake -B build && cmake --build build --target install \
 
 WORKDIR /home/sq/quafu-agent
 COPY . .
-RUN curl https://mirrors.ustc.edu.cn/misc/rustup-install.sh -sSf | sh -s -- -y \
+RUN cd qpp-backend && cmake -B build && cmake --build build --target install \
+    && cd .. && rm -rf qpp-backend/build \
+    && curl https://mirrors.ustc.edu.cn/misc/rustup-install.sh -sSf | sh -s -- -y \
     && cargo build --release && mv target/release/quafu-agent /bin/quafu-agent \
     && cargo clean && rm -rf /root/.cargo && rm -rf /root/.rustup
 

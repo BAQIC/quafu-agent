@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.15)
+project(qpp-agent)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+find_package(qpp REQUIRED)
+include_directories(include)
+add_executable(qpp-agent src/main.cpp)
+target_link_libraries(qpp-agent PUBLIC ${QPP_LINK_DEPS} libqpp)
+install(TARGETS qpp-agent DESTINATION bin)

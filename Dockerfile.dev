@@ -13,7 +13,8 @@ RUN cd qpp && cmake -B build && cmake --build build --target install
 
 WORKDIR /home/sq/quafu-agent
 COPY . .
-RUN curl https://mirrors.ustc.edu.cn/misc/rustup-install.sh -sSf | sh -s -- -y \
+RUN cd qpp-backend && cmake -B build && cmake --build build --target install \
+    && cd .. && curl https://mirrors.ustc.edu.cn/misc/rustup-install.sh -sSf | sh -s -- -y \
     && cargo build
 
 ENTRYPOINT [ "/bin/sh" ]

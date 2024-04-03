@@ -19,3 +19,6 @@ Cargo.lock
 /target
 
 /log
+
+build/
+install/
