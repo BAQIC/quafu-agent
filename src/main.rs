@@ -56,7 +56,7 @@ fn remove_source_target_files(task_id: &str) -> io::Result<()> {
 }
 
 fn run_program(task_id: &str, task: &QuafuTask) -> io::Result<Output> {
-    Command::new("/home/lucky/Code/qpp-agent/qpp-backend/install/bin/qpp-agent")
+    Command::new("qpp-agent")
         .arg("-s")
         .arg(task.shots.to_string())
         .arg("-f")
