@@ -28,14 +28,24 @@ pub fn read_stats(stats: &mut Statistics, source: &str) {
     }
 }
 
-pub fn print_stats(stats: &Statistics) -> (Vec<usize>, String, String) {
+pub fn print_stats(stats: &Statistics, qubits: u32, shots: u32) -> (Vec<usize>, String, String) {
     // get the vec of strings from 1 to length of the memory
-    let measure = (0..stats.memory.iter().nth(0).unwrap().0.len()).collect();
-
-    let mut json = json!({});
-    stats.memory.iter().for_each(|(key, value)| {
-        json[key] = json!(value);
-    });
-
-    (measure, json.to_string(), json.to_string())
+    match stats.memory.iter().nth(0) {
+        Some(v) => {
+            let mut json = json!({});
+            stats.memory.iter().for_each(|(key, value)| {
+                json[key] = json!(value);
+            });
+            ((0..v.0.len()).collect(), json.to_string(), json.to_string())
+        }
+        None => {
+            let mut json = json!({});
+            json["0".repeat(qubits as usize)] = json!(shots);
+            (
+                (0..qubits as usize).collect(),
+                json.to_string(),
+                json.to_string(),
+            )
+        }
+    }
 }

@@ -56,7 +56,7 @@ fn remove_source_target_files(task_id: &str) -> io::Result<()> {
 }
 
 fn run_program(task_id: &str, task: &QuafuTask) -> io::Result<Output> {
-    Command::new("qpp-agent")
+    Command::new("/home/lucky/Code/qpp-agent/qpp-backend/install/bin/qpp-agent")
         .arg("-s")
         .arg(task.shots.to_string())
         .arg("-f")
@@ -68,7 +68,12 @@ fn run_program(task_id: &str, task: &QuafuTask) -> io::Result<Output> {
         .output()
 }
 
-fn read_output(task_id: &str, task: &QuafuTask) -> (Vec<usize>, String, String) {
+fn read_output(
+    task_id: &str,
+    task: &QuafuTask,
+    qubits: u32,
+    shots: u32,
+) -> (Vec<usize>, String, String) {
     if 0 == task.shots {
         todo!()
     } else {
@@ -76,7 +81,7 @@ fn read_output(task_id: &str, task: &QuafuTask) -> (Vec<usize>, String, String) 
             memory: HashMap::new(),
         };
         data::read_stats(&mut stats, &format!("/tmp/{}", task_id));
-        data::print_stats(&stats)
+        data::print_stats(&stats, qubits, shots)
     }
 }
 
@@ -102,7 +107,7 @@ fn fetch_task(request_interval: u64, quafu_address: &str) {
             save_source_file(&task.circuit, &task.task_id).unwrap();
             let response = match run_program(&task.task_id, &task) {
                 Ok(exec_output) if exec_output.status.code() == Some(0) => {
-                    let output = read_output(&task.task_id, &task);
+                    let output = read_output(&task.task_id, &task, task.qubits, task.shots);
                     info!("Task {} finished", task.task_id);
                     QuafuResponse {
                         task_id: task.task_id.clone(),
