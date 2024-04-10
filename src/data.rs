@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, fs, path::Path};
 
 use serde_json::json;
 
@@ -6,25 +6,31 @@ pub struct Statistics {
     pub memory: HashMap<String, usize>,
 }
 
-pub fn read_stats(stats: &mut Statistics, source: &str) {
-    for line in fs::read_to_string(source.to_string() + ".stats")
-        .unwrap()
-        .lines()
-    {
-        let complex = line
-            .split(" ")
-            .filter_map(|s| s.parse::<usize>().ok())
-            .collect::<Vec<_>>();
+pub fn read_stats(stats: &mut Statistics, source: &str, qubits: u32, shots: u32) {
+    if Path::new(&(source.to_string() + ".stats")).exists() {
+        for line in fs::read_to_string(source.to_string() + ".stats")
+            .unwrap()
+            .lines()
+        {
+            let complex = line
+                .split(" ")
+                .filter_map(|s| s.parse::<usize>().ok())
+                .collect::<Vec<_>>();
 
-        stats.memory.insert(
-            complex[..complex.len() - 1]
-                .iter()
-                .map(|c| c.to_string())
-                .collect::<String>()
-                .chars()
-                .collect::<String>(),
-            complex.last().unwrap().clone(),
-        );
+            stats.memory.insert(
+                complex[..complex.len() - 1]
+                    .iter()
+                    .map(|c| c.to_string())
+                    .collect::<String>()
+                    .chars()
+                    .collect::<String>(),
+                complex.last().unwrap().clone(),
+            );
+        }
+    } else {
+        stats
+            .memory
+            .insert("0".repeat(qubits as usize), shots as usize);
     }
 }
 

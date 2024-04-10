@@ -80,7 +80,7 @@ fn read_output(
         let mut stats = data::Statistics {
             memory: HashMap::new(),
         };
-        data::read_stats(&mut stats, &format!("/tmp/{}", task_id));
+        data::read_stats(&mut stats, &format!("/tmp/{}", task_id), qubits, shots);
         data::print_stats(&stats, qubits, shots)
     }
 }
