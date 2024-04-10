@@ -97,12 +97,20 @@ fn fetch_task(request_interval: u64, quafu_address: &str) {
         Value::Null => {}
         _ => {
             info!("Task {} received", res["task_id"].as_str().unwrap());
-            let task = QuafuTask::new(
+            let mut task = QuafuTask::new(
                 res["qubits"].as_u64().unwrap() as u32,
                 res["circuit"].as_str().unwrap().to_string(),
                 res["shots"].as_u64().unwrap() as u32,
                 res["task_id"].as_str().unwrap().to_string(),
             );
+
+            if !task.circuit.contains("measure") {
+                warn!("Task {} doesn't contain measure op", task.task_id);
+                for qubit in 0..task.qubits {
+                    task.circuit
+                        .push_str(&format!("\r\nmeasure q[{}] -> c[{}];", qubit, qubit));
+                }
+            }
 
             save_source_file(&task.circuit, &task.task_id).unwrap();
             let response = match run_program(&task.task_id, &task) {
