@@ -5,6 +5,11 @@ docker pull ghcr.io/baqic/quafu-agent:main
 docker run -d --network=host --name=quafu-agent --restart=always ghcr.io/baqic/quafu-agent:main
 ```
 
+## run with custom config
+```bash
+docker run -d --network=host --name=quafu-agent --env QUAFUADDR=xxx --restart=always ghcr.io/baqic/quafu-agent:main
+```
+
 ## check the logs
 ```bash
 # if the name of your container is quafu-agent
