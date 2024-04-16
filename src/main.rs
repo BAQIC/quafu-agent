@@ -85,13 +85,22 @@ fn read_output(
     }
 }
 
-fn fetch_task(request_interval: u64, quafu_address: &str) {
+fn fetch_task(request_interval: u64, quafu_address: &str, system_id: usize) {
     thread::sleep(time::Duration::from_secs(request_interval));
     // system_id=7 is the chip id of the quafu system
-    let res = reqwest::blocking::get(&format!("{}scq_task/?system_id=7", quafu_address))
-        .unwrap()
-        .json::<Value>()
-        .unwrap();
+    let res = match reqwest::blocking::get(&format!(
+        "{}scq_task/?system_id={}",
+        quafu_address, system_id
+    ))
+    .unwrap()
+    .json::<Value>()
+    {
+        Ok(res) => res,
+        Err(e) => {
+            warn!("{}", format!("Fetch task failed: {}", e.to_string()));
+            Value::Null
+        }
+    };
 
     match res {
         Value::Null => {}
@@ -123,7 +132,7 @@ fn fetch_task(request_interval: u64, quafu_address: &str) {
                         measure: format!("{:?}", output.0),
                         raw: output.1,
                         res: output.2,
-                        server: 7,
+                        server: system_id,
                     }
                 }
                 Ok(_) => {
@@ -134,7 +143,7 @@ fn fetch_task(request_interval: u64, quafu_address: &str) {
                         measure: "".to_string(),
                         raw: "".to_string(),
                         res: "".to_string(),
-                        server: 7,
+                        server: system_id,
                     }
                 }
                 Err(e) => {
@@ -145,7 +154,7 @@ fn fetch_task(request_interval: u64, quafu_address: &str) {
                         measure: "".to_string(),
                         raw: e.to_string(),
                         res: "".to_string(),
-                        server: 7,
+                        server: system_id,
                     }
                 }
             };
@@ -183,12 +192,18 @@ fn main() {
         dotenv::from_filename(".env").ok();
     }
 
-    let quafu_addr = std::env::var("QUAFU_ADDR")
-        .unwrap_or_else(|_| "http://120.46.209.71/qbackend/".to_string());
+    let quafu_ip = std::env::var("QUAFU_IP").unwrap_or_else(|_| "120.46.209.71".to_string());
+    let system_id = std::env::var("SYSTEM_ID")
+        .unwrap_or_else(|_| "7".to_string())
+        .parse::<usize>()
+        .unwrap();
 
-    info!("Quafu address: {}", quafu_addr);
+    let quafu_addr = format!("http://{}/qbackend/", quafu_ip);
+
+    info!("Quafu IP: {}", quafu_addr);
+    info!("System id: {}", system_id);
 
     loop {
-        fetch_task(1, &quafu_addr)
+        fetch_task(1, &quafu_addr, system_id)
     }
 }

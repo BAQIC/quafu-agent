@@ -7,8 +7,8 @@ docker run -d --network=host --name=quafu-agent --restart=always ghcr.io/baqic/q
 
 ## run with custom config
 ```bash
-# change xxx to your quafu server address
-docker run -d --network=host --name=quafu-agent --env QUAFU_ADDR=xxx --restart=always ghcr.io/baqic/quafu-agent:main
+# change xxx to your quafu server ip and system id
+docker run -d --network=host --name=quafu-agent --env QUAFU_IP=xxx --env SYSTEM_ID=xxx  --restart=always ghcr.io/baqic/quafu-agent:main
 ```
 
 ## check the logs

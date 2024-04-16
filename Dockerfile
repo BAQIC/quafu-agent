@@ -3,7 +3,8 @@ FROM alpine:latest
 ENV PATH="/root/.cargo/bin:${PATH}"
 ENV RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
-ENV QUAFU_ADDR="http://120.46.209.71/qbackend/"
+ENV QUAFU_IP=120.46.209.71
+ENV SYSTEM_ID=7
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.bfsu.edu.cn/g' /etc/apk/repositories \
     && apk add --no-cache eigen-dev cmake git build-base curl perl
